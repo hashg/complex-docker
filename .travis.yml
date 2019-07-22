@@ -1,0 +1,26 @@
+sudo:required
+services:
+  - docker
+
+before_install:
+  -docker build -t hashg/complex-react -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true hashg/complex-react npm test -- --coverage
+
+#build individual dockers
+after_success:
+  - docker build -t hashg/complex-client ./client
+  - docker build -t hashg/complex-worker ./worker
+  - docker build -t hashg/complex-server ./server
+  - docker build -t hashg/complex-nginx ./nginx
+
+  #login to docker CLI
+  - echo "$DOCKER_PASSWD" | docker login -u "$DOCKER_ID" --password-stdin
+
+  # Take those images and push to docker hub
+  - docker push hashg/complex-client
+  - docker push hashg/complex-worker
+  - docker push hashg/complex-server
+  - docker push hashg/complex-nginx
+
