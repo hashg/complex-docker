@@ -3,7 +3,7 @@ services:
   - docker
 
 before_install:
-  -docker build -t hashg/complex-react -f ./client/Dockerfile.dev ./client
+  - docker build -t hashg/complex-react -f ./client/Dockerfile.dev ./client
 
 script:
   - docker run -e CI=true hashg/complex-react npm test -- --coverage
